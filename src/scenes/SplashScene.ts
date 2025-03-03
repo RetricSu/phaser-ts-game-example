@@ -1,20 +1,23 @@
 import { Scene } from "phaser";
 
 export class SplashScene extends Scene {
-
     constructor() {
         super("SplashScene");
     }
 
     init(): void {
-        this.cameras.main.fadeIn(1000, 0, 0, 0);   
+        this.cameras.main.fadeIn(1000, 0, 0, 0);
     }
 
     create(): void {
-        const logo = this.add.image(this.scale.width / 2, this.scale.height / 2, "logo");
+        const logo = this.add.image(
+            this.scale.width / 2,
+            this.scale.height / 2,
+            "logo",
+        );
         // Add shine effect
-        logo.postFX.addShine(1, .2, 5);
-        
+        logo.postFX.addShine(1, 0.2, 5);
+
         this.time.addEvent({
             delay: 2000,
             callback: () => {
@@ -23,8 +26,7 @@ export class SplashScene extends Scene {
                 main_camera.once("camerafadeoutcomplete", () => {
                     this.scene.start("MainScene");
                 });
-            }
+            },
         });
     }
-
-} 
+}

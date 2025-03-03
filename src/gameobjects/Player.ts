@@ -6,7 +6,6 @@ interface PlayerConstructorParams {
 }
 
 export class Player extends Physics.Arcade.Image {
-    
     // Player states: waiting, start, can_move
     state: string = "waiting";
     propulsion_fire: GameObjects.Sprite | null = null;
@@ -19,14 +18,18 @@ export class Player extends Physics.Arcade.Image {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
 
-        this.propulsion_fire = this.scene.add.sprite(this.x - 32, this.y, "propulsion-fire");
+        this.propulsion_fire = this.scene.add.sprite(
+            this.x - 32,
+            this.y,
+            "propulsion-fire",
+        );
         this.propulsion_fire.play("fire");
 
         // Bullets group to create pool
         this.bullets = this.scene.physics.add.group({
             classType: Bullet,
             maxSize: 100,
-            runChildUpdate: true
+            runChildUpdate: true,
         });
     }
 
@@ -44,7 +47,11 @@ export class Player extends Physics.Arcade.Image {
             yoyo: false,
             onUpdate: () => {
                 // Just a little trail FX
-                const propulsion = this.scene.add.sprite(this.x - 32, this.y, "propulsion-fire");
+                const propulsion = this.scene.add.sprite(
+                    this.x - 32,
+                    this.y,
+                    "propulsion-fire",
+                );
                 propulsion.play("fire");
                 propulsion_fires_trail.push(propulsion);
             },
@@ -55,11 +62,11 @@ export class Player extends Physics.Arcade.Image {
                         targets: propulsion,
                         alpha: 0,
                         scale: 0.5,
-                        duration: 200 + (i * 2),
+                        duration: 200 + i * 2,
                         ease: "Power2",
                         onComplete: () => {
                             propulsion.destroy();
-                        }
+                        },
                     });
                 });
 
@@ -69,16 +76,19 @@ export class Player extends Physics.Arcade.Image {
 
                 // When all tween are finished, the player can move
                 this.state = "can_move";
-            }
+            },
         });
     }
 
     move(direction: string): void {
-        if(this.state === "can_move") {
+        if (this.state === "can_move") {
             if (direction === "up" && this.y - 10 > 0) {
                 this.y -= 5;
                 this.updatePropulsionFire();
-            } else if (direction === "down" && this.y + 75 < this.scene.scale.height) {
+            } else if (
+                direction === "down" &&
+                this.y + 75 < this.scene.scale.height
+            ) {
                 this.y += 5;
                 this.updatePropulsionFire();
             }
@@ -103,9 +113,9 @@ export class Player extends Physics.Arcade.Image {
 
     update(): void {
         // Sinusoidal movement up and down up and down 2px
-        this.y += Math.sin(this.scene.time.now / 200) * 0.10;
+        this.y += Math.sin(this.scene.time.now / 200) * 0.1;
         if (this.propulsion_fire) {
             this.propulsion_fire.y = this.y;
         }
     }
-} 
+}
