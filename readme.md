@@ -45,7 +45,8 @@ pnpm install
 ```
 
 1. Configure your Fiber nodes (refer to [Fiber Network documentation](http://fiber.world/docs))
-2. Start the development server:
+2. Update your nodes information in `src/fiber/index.ts`
+3. Start the development server:
 
 ```bash
 pnpm run dev
