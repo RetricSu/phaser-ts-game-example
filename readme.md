@@ -1,13 +1,69 @@
-# Phaser's Revenge
+# Phaser's Revenge: A Layer 2 Gaming Demo
 
-Phaser's Revenge is an adaptation of the classic game Space Invaders.
+Phaser's Revenge is a example game that taking from [Phaser.js](https://phaser.io/) and adapted for the [Fiber network](http://fiber.world/) that demonstrates real-time token payment using off-chain solution similar to [Lightning Network](https://lightning.network/). The game showcases how traditional gaming mechanics can be seamlessly integrated with blockchain technology for instant micro-payments.
 
-Your mission is to shoot the enemy ship and dodge its attacks to score as many points as possible in a short amount of time.
+## Game Overview
 
-## Instructions
+In this Space Invaders-style game:
 
-1. Clone the repository.
-2. Install dependencies with `pnpm install`.
-3. Start the development server with `pnpm run dev`.
-4. If you want to build the project, run `pnpm run build`.
+- Players control a spaceship to shoot a boss enemy ship and dodge attacks
+- Each successful hit earns points that are instantly converted to CKB tokens
+- When players take damage, they lose points (and tokens)
+- All token transfers occur in real-time through Fiber Network channels
 
+## Blockchain Integration
+
+This demo leverages Fiber Network to enable:
+
+- Real-time token transfers between player and boss (game host)
+- Instant settlement of game points as CKB tokens
+- Zero-latency gameplay with blockchain features
+- Minimal transaction fees through Layer 2 scaling
+
+### Prerequisites
+
+Before running the game, you need to set up the Fiber Network environment:
+
+1. Set up two local Fiber nodes (one for player, one for boss)
+2. Open a payment channel between the these two nodes
+3. Each node must deposit 500 CKB into its channel
+
+**Note for Developers:** This is a simplified demo. In a production environment, you'll need to implement:
+
+- Channel opening logic with player matching
+- Final scores are settled on-chain when the game ends including proper channel close
+- Error handling for insufficient channel balance
+- Security measures for channel management
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies:
+
+```bash
+pnpm install
+```
+
+1. Configure your Fiber nodes (refer to [Fiber Network documentation](http://fiber.world/docs))
+2. Start the development server:
+
+```bash
+pnpm run dev
+```
+
+1. Build for production:
+
+```bash
+pnpm run build
+```
+
+## Technical Details
+
+- Game Engine: Phaser.js
+- Layer 2 Solution: Fiber Network
+- Base Layer: Nervos CKB
+- Token: Native CKB
+
+## Disclaimer
+
+This is a demonstration project to showcase the capabilities of Fiber Network for gaming applications. The implementation is simplified for educational purposes. Production applications should implement proper security measures, error handling, and user management systems.
