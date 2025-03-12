@@ -2,10 +2,14 @@ import { Scene } from "phaser";
 
 interface GameOverSceneInitData {
     points?: number;
+    playerPoints?: number;
+    bossPoints?: number;
 }
 
 export class GameOverScene extends Scene {
     end_points: number = 0;
+    player_points: number = 0;
+    boss_points: number = 0;
 
     constructor() {
         super("GameOverScene");
@@ -14,6 +18,8 @@ export class GameOverScene extends Scene {
     init(data: GameOverSceneInitData): void {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
         this.end_points = data.points || 0;
+        this.player_points = data.playerPoints || 0;
+        this.boss_points = data.bossPoints || 0;
     }
 
     create(): void {
@@ -60,7 +66,7 @@ export class GameOverScene extends Scene {
                 this.scale.width / 2,
                 this.scale.height / 2 + 85,
                 "pixelfont",
-                `YOUR POINTS: ${this.end_points}`,
+                `Your POINTS: ${this.end_points}`,
                 24,
             )
             .setOrigin(0.5, 0.5);
@@ -68,7 +74,27 @@ export class GameOverScene extends Scene {
         this.add
             .bitmapText(
                 this.scale.width / 2,
-                this.scale.height / 2 + 130,
+                this.scale.height / 2 + 110,
+                "pixelfont",
+                `GAIN: ${this.player_points} CKB`,
+                20,
+            )
+            .setOrigin(0.5, 0.5);
+
+        this.add
+            .bitmapText(
+                this.scale.width / 2,
+                this.scale.height / 2 + 135,
+                "pixelfont",
+                `LOSS: ${this.boss_points} CKB`,
+                20,
+            )
+            .setOrigin(0.5, 0.5);
+
+        this.add
+            .bitmapText(
+                this.scale.width / 2,
+                this.scale.height / 2 + 170,
                 "pixelfont",
                 "CLICK TO RESTART",
                 24,

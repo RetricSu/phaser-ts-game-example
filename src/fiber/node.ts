@@ -25,7 +25,6 @@ export class FiberNode {
 
     async createCKBInvoice(amount: Hex, description: string) {
         const paymentImage = this.generateRandomPaymentImage();
-        console.log("paymentImage", paymentImage);
         return await this.rpc.newInvoice({
             amount,
             currency: "Fibt",

@@ -2,11 +2,16 @@ import { Scene, Input, Types } from "phaser";
 import { Player } from "../gameobjects/Player";
 import { BlueEnemy } from "../gameobjects/BlueEnemy";
 import { Bullet } from "../gameobjects/Bullet";
+import { prepareNodes, payPlayerPoints, payBossPoints } from "../fiber";
 
 export class MainScene extends Scene {
     player: Player | null = null;
     enemy_blue: BlueEnemy | null = null;
     cursors!: Types.Input.Keyboard.CursorKeys;
+    bossNode: any = null;
+    playerNode: any = null;
+    bossPoints: number = 0;
+    playerPoints: number = 0;
 
     points: number = 0;
     game_over_timeout: number = 20;
@@ -15,13 +20,25 @@ export class MainScene extends Scene {
         super("MainScene");
     }
 
-    init(): void {
+    async init(): Promise<void> {
         this.cameras.main.fadeIn(1000, 0, 0, 0);
         this.scene.launch("MenuScene");
 
         // Reset points
         this.points = 0;
+        this.bossPoints = 0;
+        this.playerPoints = 0;
         this.game_over_timeout = 20;
+
+        // Initialize Fiber nodes
+        try {
+            const { bossNode, playerNode } = await prepareNodes();
+            this.bossNode = bossNode;
+            this.playerNode = playerNode;
+            console.log("Fiber nodes initialized successfully");
+        } catch (error) {
+            console.error("Failed to initialize Fiber nodes:", error);
+        }
     }
 
     create(): void {
@@ -67,6 +84,8 @@ export class MainScene extends Scene {
                         this.scene.stop("HudScene");
                         this.scene.start("GameOverScene", {
                             points: this.points,
+                            playerPoints: this.playerPoints,
+                            bossPoints: this.bossPoints,
                         });
                     } else {
                         this.game_over_timeout--;
@@ -109,7 +128,7 @@ export class MainScene extends Scene {
             this.physics.add.overlap(
                 this.player.bullets,
                 this.enemy_blue,
-                (_enemy, bullet) => {
+                async (_enemy, bullet) => {
                     const typedBullet = bullet as unknown as Bullet;
                     if (
                         typedBullet.destroyBullet &&
@@ -119,6 +138,21 @@ export class MainScene extends Scene {
                         typedBullet.destroyBullet();
                         this.enemy_blue.damage(this.player.x, this.player.y);
                         this.points += 10;
+                        this.playerPoints += 10;
+
+                        // Call payPlayerPoints when player hits enemy
+                        if (this.bossNode && this.playerNode) {
+                            try {
+                                await payPlayerPoints(
+                                    this.bossNode,
+                                    this.playerNode,
+                                    10,
+                                );
+                            } catch (error) {
+                                console.error("Failed to score point:", error);
+                            }
+                        }
+
                         const hudScene = this.scene.get("HudScene");
                         if (
                             hudScene &&
@@ -135,14 +169,31 @@ export class MainScene extends Scene {
             this.physics.add.overlap(
                 this.enemy_blue.bullets,
                 this.player,
-                (_player, bullet) => {
+                async (_player, bullet) => {
                     const typedBullet = bullet as unknown as Bullet;
                     if (typedBullet.destroyBullet) {
                         typedBullet.destroyBullet();
                         this.cameras.main.shake(100, 0.01);
-                        // Flash the color white for 300ms
                         this.cameras.main.flash(300, 255, 10, 10, false);
                         this.points -= 10;
+                        this.bossPoints += 10;
+
+                        // Call payBossPoints when enemy hits player
+                        if (this.bossNode && this.playerNode) {
+                            try {
+                                await payBossPoints(
+                                    this.bossNode,
+                                    this.playerNode,
+                                    10,
+                                );
+                            } catch (error) {
+                                console.error(
+                                    "Failed to process lose point:",
+                                    error,
+                                );
+                            }
+                        }
+
                         const hudScene = this.scene.get("HudScene");
                         if (
                             hudScene &&

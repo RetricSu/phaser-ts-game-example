@@ -1,4 +1,7 @@
+import { Hex } from "@ckb-ccc/core";
 import { FiberNode } from "./node";
+
+export const amountPerPoint = 1 * 10 ** 8; // 1 CKB per point
 
 const node1 = {
     peerId: "QmdW4WGRUfqQ8hx92Uaufx4n3TXrJUoDP666BQwbqiDrnv",
@@ -15,8 +18,6 @@ const node2 = {
         "/ip4/127.0.0.1/tcp/8238/p2p/QmcFpUnjRvMyqbFBTn94wwF8LZodvPWpK39Wg9pYr2i4TQ",
     url: "/node2-api",
 };
-
-const amountPerShotHit = "0x2540be400"; // 100 CKB
 
 export async function prepareNodes() {
     const bossNode = new FiberNode(node1.url, node1.peerId, node1.address);
@@ -38,22 +39,35 @@ export async function prepareNodes() {
     return { bossNode, playerNode };
 }
 
-export async function scorePoint(bossNode: FiberNode, playerNode: FiberNode) {
+export async function payPlayerPoints(
+    bossNode: FiberNode,
+    playerNode: FiberNode,
+    points: number,
+) {
+    const amount: Hex = `0x${(amountPerPoint * points).toString(16)}`;
+
     const invoice = await playerNode.createCKBInvoice(
-        amountPerShotHit,
+        amount,
         "player hit the boss!",
     );
-    console.log("invoice", invoice);
     const result = await bossNode.sendPayment(invoice.invoice_address);
+    console.log(`boss pay player ${points} CKB`);
+    console.log("invoice", invoice);
     console.log("payment result", result);
 }
 
-export async function losePoint(bossNode: FiberNode, playerNode: FiberNode) {
+export async function payBossPoints(
+    bossNode: FiberNode,
+    playerNode: FiberNode,
+    points: number,
+) {
+    const amount: Hex = `0x${(amountPerPoint * points).toString(16)}`;
     const invoice = await bossNode.createCKBInvoice(
-        amountPerShotHit,
+        amount,
         "boss hit the player!",
     );
-    console.log("invoice", invoice);
     const result = await playerNode.sendPayment(invoice.invoice_address);
+    console.log(`player pay boss ${points} CKB`);
+    console.log("invoice", invoice);
     console.log("payment result", result);
 }

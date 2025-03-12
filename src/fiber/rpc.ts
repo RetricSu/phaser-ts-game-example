@@ -1,6 +1,6 @@
 import { Hex, RequestorJsonRpc } from "@ckb-ccc/core";
 
-// Define types based on Fiber RPC documentation
+// Define types based on Fiber RPC documentation https://github.com/nervosnetwork/fiber/blob/main/src/rpc/README.md
 type Hash256 = string;
 type Pubkey = string;
 type PeerId = string;
