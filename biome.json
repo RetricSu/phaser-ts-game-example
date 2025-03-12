@@ -23,7 +23,7 @@
         "rules": {
             "recommended": true
         },
-	"ignore": ["dist", "node_modules"]
+        "ignore": ["dist", "node_modules"]
     },
     "javascript": {
         "formatter": {
